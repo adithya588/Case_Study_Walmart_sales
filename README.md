@@ -63,10 +63,109 @@ This project is an end-to-end data analysis solution designed to extract critica
            group by payment_method
            order by no_of_payments;
           ```
-     - Identifying best-selling product categories.
-     - Sales performance by time, city, and payment method.
-     - Analyzing peak sales periods and customer buying patterns.
-     - Profit margin analysis by branch and category.
+     - 2. Identify the highest-rated category in each branch, displaying the branch, category,AVG RATING
+       ```SQL
+       select *
+         from
+         (
+         select category , branch , avg(rating) as average_rating,
+         rank() over (PARTITION BY branch  order by avg(rating) desc) as rankk
+         from walmart
+         group by category ,branch
+         ) as rankk
+         where rankk = 1;
+       ```
+      - 3. Identify the busiest day for each branch based on the number of transactions
+        ```sql
+        Select *
+         from(
+         SELECT 
+             branch,  
+             DATE_FORMAT(STR_TO_DATE(date, '%d/%m/%y'), '%W') AS day_name,  
+             COUNT(*) AS no_of_transactions  , rank() over(partition by branch 
+             order by count(*) desc) as busiest_day
+         FROM walmart  
+         GROUP BY branch, day_name  
+         ) as sub_query
+         where busiest_day = 1;
+        ```
+     - 4. Calculate the total quantity Of items sold per payment method. List payment method and total _ quantity
+     ```sql
+     select payment_method , sum(quantity) as total_quantity
+      from walmart 
+      group by payment_method;
+     ```
+      5 Determine the average, minimum, and maximum rating of category for each city. List the city, average _ rating, min_rating, and max_rating.
+      ```sql
+      select category , avg(rating)as avg_rating , max(rating)as max_rating ,
+      min(rating)as min_rating , city
+      from walmart
+      group by city, category;
+     ```
+       6 Calculate the total profit for each category by considering total_profit as (unit _ price * quantity * profit_margin) .List category and total_profit, 
+        orderedfrom highest to lowest profit.
+     ```sql
+      select category , sum(unit_price * quantity * profit_margin) as total_profit, sum(total) as total_revenue
+      from walmart
+      group by category
+      order by total_profit desc;
+     ```
+     -- 7 Determine the most common payment method for each Branch . Display Branch and the preferred payment method
+     ```sql
+      with cte as (
+      select branch , payment_method , count(*) as no_of_trancsactions,
+      rank() over(partition by branch order by count(*) desc ) as most_trans
+      from walmart
+      group by branch , payment_method
+      ) 
+      select *
+      from cte
+      where most_trans = 1;
+     ```
+     
+--  Q.8  Categorize sales into 3 group MORNING, AFTERNOON, EVENING Find out each of the shift and number of invoices
+```sql
+         SELECT branch , 
+             CASE 
+                 WHEN HOUR(time) < 12 THEN 'Morning'
+                 WHEN HOUR(time) BETWEEN 12 AND 17 THEN 'Afternoon'
+                 ELSE 'Evening'
+             END AS day_time,
+             COUNT(*) AS total_transactions
+         FROM walmart
+         GROUP BY day_time, branch
+         order by branch , day_time desc;
+ ```
+- Q9: Identify the 5 branches with the highest revenue decrease ratio from last year to current year (e.g., 2022 to 2023)
+  ```sql
+   WITH revenue_2022 AS (
+       SELECT 
+           branch,
+           SUM(total) AS revenue
+       FROM walmart
+       WHERE YEAR(STR_TO_DATE(date, '%d/%m/%Y')) = 2022
+       GROUP BY branch
+   ),
+   revenue_2023 AS (
+       SELECT 
+           branch,
+           SUM(total) AS revenue
+       FROM walmart
+       WHERE YEAR(STR_TO_DATE(date, '%d/%m/%Y')) = 2023
+       GROUP BY branch
+   )
+   SELECT 
+       r2022.branch,
+       r2022.revenue AS last_year_revenue,
+       r2023.revenue AS current_year_revenue,
+       ROUND(((r2022.revenue - r2023.revenue) / r2022.revenue) * 100, 2) AS revenue_decrease_ratio
+   FROM revenue_2022 AS r2022
+   JOIN revenue_2023 AS r2023 ON r2022.branch = r2023.branch
+   WHERE r2022.revenue > r2023.revenue
+   ORDER BY revenue_decrease_ratio DESC
+   LIMIT 5;
+  ```
+ 
    - **Documentation**: Keep clear notes of each query's objective, approach, and results.
 
 ### 10. Project Publishing and Documentation
