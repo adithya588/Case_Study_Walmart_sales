@@ -1,7 +1,0 @@
- 1 . -- 1. Find different payment method and number of transactions, number of qty sold 
-```Sql
-select payment_method  ,count(*) as no_of_payments ,  sum(quantity) as sold_qty
- from walmart 
- group by payment_method
- order by no_of_payments;
-```
