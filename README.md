@@ -49,9 +49,9 @@ This project is an end-to-end data analysis solution designed to extract critica
    - **Create New Columns**: Calculate the `Total Amount` for each transaction by multiplying `unit_price` by `quantity` and adding this as a new column.
    - **Enhance Dataset**: Adding this calculated field will streamline further SQL analysis and aggregation tasks.
 
-### 8. Load Data into MySQL and PostgreSQL
-   - **Set Up Connections**: Connect to MySQL and PostgreSQL using `sqlalchemy` and load the cleaned data into each database.
-   - **Table Creation**: Set up tables in both MySQL and PostgreSQL using Python SQLAlchemy to automate table creation and data insertion.
+### 8. Load Data into MySQL
+   - **Set Up Connections**: Connect to MySQL  using `sqlalchemy` and load the cleaned data into each database.
+   - **Table Creation**: Set up tables in both MySQL creation and data insertion.
    - **Verification**: Run initial SQL queries to confirm that the data has been loaded accurately.
 
 ### 9. SQL Analysis: Complex Queries and Business Problem Solving
@@ -123,15 +123,11 @@ Possible extensions to this project:
 
 ---
 
-## License
-
-This project is licensed under the MIT License. 
-
----
 
 ## Acknowledgments
 
 - **Data Source**: Kaggle’s Walmart Sales Dataset
 - **Inspiration**: Walmart’s business case studies on sales and supply chain optimization.
+- 
 
 ---
